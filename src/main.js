@@ -72,12 +72,10 @@ playButton.addEventListener('click', async () => {
     let payload;
     if (selectedFile.name.endsWith('.zip')) {
       payload = await loadFromZip(selectedFile);
-    } else if (selectedFile.name.endsWith('.bin')) {
+    } else if (selectedFile.name.endsWith('.bin') || selectedFile.name.endsWith('.iso')) {
       payload = await loadFromBin(selectedFile);
     } else {
-      // Assume JSON
-      const text = await selectedFile.text();
-      payload = JSON.parse(text);
+      throw new Error('Unsupported file format. Please use .bin, .zip, or .iso files.');
     }
     if (!payload.instructions) throw new Error('Invalid ROM format.');
     machine.setDevice(payload.device || 'didj');
