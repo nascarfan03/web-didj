@@ -55,8 +55,8 @@
 
         <div class="panel-block">
           <label for="rom-file">Load a ROM / script</label>
-          <input type="file" id="rom-file" accept="application/json" />
-          <small>Use JSON programs matching the emulator format.</small>
+          <input type="file" id="rom-file" accept=".json,.zip,.bin" />
+          <small>Use JSON programs, ZIP archives, or BIN files matching the emulator format.</small>
         </div>
 
         <div class="panel-block">
@@ -79,6 +79,7 @@
     </main>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script type="module" src="src/main.js"></script>
 </body>
 </html>

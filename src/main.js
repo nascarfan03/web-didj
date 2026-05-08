@@ -29,6 +29,30 @@ function setActiveDevice(device) {
   selectLeapster.classList.toggle('active', device === 'leapster');
 }
 
+async function loadFromZip(file) {
+  try {
+    const zip = await JSZip.loadAsync(file);
+    // Look for JSON files in the zip
+    const jsonFiles = Object.keys(zip.files).filter(name => name.endsWith('.json') && !zip.files[name].dir);
+    if (jsonFiles.length === 0) throw new Error('No JSON file found in ZIP.');
+    // Load the first JSON file
+    const jsonContent = await zip.files[jsonFiles[0]].async('text');
+    return JSON.parse(jsonContent);
+  } catch (error) {
+    throw new Error(`Failed to load ZIP: ${error.message}`);
+  }
+}
+
+async function loadFromBin(file) {
+  try {
+    // Try to parse as JSON first
+    const text = await file.text();
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Failed to load BIN: ${error.message}`);
+  }
+}
+
 selectDidj.addEventListener('click', () => {
   setActiveDevice('didj');
   chooseProgram('didj-demo');
@@ -54,8 +78,16 @@ romFile.addEventListener('change', async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
   try {
-    const text = await file.text();
-    const payload = JSON.parse(text);
+    let payload;
+    if (file.name.endsWith('.zip')) {
+      payload = await loadFromZip(file);
+    } else if (file.name.endsWith('.bin')) {
+      payload = await loadFromBin(file);
+    } else {
+      // Assume JSON
+      const text = await file.text();
+      payload = JSON.parse(text);
+    }
     if (!payload.instructions) throw new Error('Invalid ROM format.');
     machine.setDevice(payload.device || 'didj');
     setActiveDevice(payload.device || 'didj');
