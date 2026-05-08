@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LeapFrog Didj / Leapster Web Emulator</title>
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <h1>LeapFrog Didj + Leapster Emulator</h1>
+        <p>Browser-based emulator shell for Didj / Leapster style games.</p>
+      </div>
+      <div class="device-toggle">
+        <button id="select-didj" class="active">Didj</button>
+        <button id="select-leapster">Leapster</button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <section class="device-panel">
+        <div class="device-shell artboard" id="device-shell">
+          <div class="device-screen-frame">
+            <canvas id="screen" width="160" height="120" aria-label="Emulator screen"></canvas>
+          </div>
+          <div class="device-controls">
+            <div class="control-row">
+              <button class="round-button" id="button-a">A</button>
+              <button class="round-button" id="button-b">B</button>
+            </div>
+            <div class="control-row small-buttons">
+              <button class="round-button">L</button>
+              <button class="round-button">R</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="control-panel">
+        <div class="panel-block">
+          <label for="program-select">Built-in demo</label>
+          <select id="program-select">
+            <option value="didj-demo">Didj Demo</option>
+            <option value="leapster-demo">Leapster Demo</option>
+          </select>
+        </div>
+
+        <div class="panel-block row-gap">
+          <button id="start-button" class="primary">Start</button>
+          <button id="stop-button">Stop</button>
+          <button id="reset-button">Reset</button>
+        </div>
+
+        <div class="panel-block">
+          <label for="rom-file">Load a ROM / script</label>
+          <input type="file" id="rom-file" accept="application/json" />
+          <small>Use JSON programs matching the emulator format.</small>
+        </div>
+
+        <div class="panel-block">
+          <h2>Controls</h2>
+          <ul>
+            <li><strong>Arrow keys</strong> = D-pad</li>
+            <li><strong>Z</strong> = A button</li>
+            <li><strong>X</strong> = B button</li>
+            <li><strong>Space</strong> = Start</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="console-panel">
+        <div class="panel-block">
+          <h2>Emulator log</h2>
+          <pre id="log-output" class="log-output"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
