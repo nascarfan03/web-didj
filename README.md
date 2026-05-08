@@ -16,7 +16,7 @@ LeapFrog Didj and Leapster browser emulator shell.
 1. Open `index.html` in a modern browser.
 2. Choose between `Didj` and `Leapster`.
 3. Start the emulator and use arrow keys + `Z`/`X`.
-4. Optionally load a ROM file: JSON, ZIP (containing JSON), or BIN (JSON format).
+4. Optionally load a ROM file: JSON, ZIP (containing JSON), or BIN (JSON format), then click "Play ROM" to load and start it.
 
 ## Controls
 

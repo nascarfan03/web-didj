@@ -2,6 +2,7 @@ import {LeapfrogMachine, builtInPrograms} from './emulator.js';
 
 const canvas = document.getElementById('screen');
 const startButton = document.getElementById('start-button');
+const playButton = document.getElementById('play-button');
 const stopButton = document.getElementById('stop-button');
 const resetButton = document.getElementById('reset-button');
 const programSelect = document.getElementById('program-select');
@@ -11,6 +12,7 @@ const selectDidj = document.getElementById('select-didj');
 const selectLeapster = document.getElementById('select-leapster');
 
 const machine = new LeapfrogMachine(canvas, updateLog);
+let selectedFile = null;
 
 function updateLog(message) {
   logOutput.textContent = `${message}\n${logOutput.textContent}`;
@@ -64,6 +66,29 @@ selectLeapster.addEventListener('click', () => {
 });
 
 startButton.addEventListener('click', () => machine.start());
+playButton.addEventListener('click', async () => {
+  if (!selectedFile) return;
+  try {
+    let payload;
+    if (selectedFile.name.endsWith('.zip')) {
+      payload = await loadFromZip(selectedFile);
+    } else if (selectedFile.name.endsWith('.bin')) {
+      payload = await loadFromBin(selectedFile);
+    } else {
+      // Assume JSON
+      const text = await selectedFile.text();
+      payload = JSON.parse(text);
+    }
+    if (!payload.instructions) throw new Error('Invalid ROM format.');
+    machine.setDevice(payload.device || 'didj');
+    setActiveDevice(payload.device || 'didj');
+    machine.loadProgram(payload);
+    machine.start();
+    updateLog(`Loaded and started ROM: ${selectedFile.name}`);
+  } catch (error) {
+    updateLog(`ROM error: ${error.message}`);
+  }
+});
 stopButton.addEventListener('click', () => machine.stop());
 resetButton.addEventListener('click', () => {
   machine.resetState();
@@ -74,28 +99,16 @@ programSelect.addEventListener('change', (event) => {
   chooseProgram(event.target.value);
 });
 
-romFile.addEventListener('change', async (event) => {
+romFile.addEventListener('change', (event) => {
   const file = event.target.files?.[0];
-  if (!file) return;
-  try {
-    let payload;
-    if (file.name.endsWith('.zip')) {
-      payload = await loadFromZip(file);
-    } else if (file.name.endsWith('.bin')) {
-      payload = await loadFromBin(file);
-    } else {
-      // Assume JSON
-      const text = await file.text();
-      payload = JSON.parse(text);
-    }
-    if (!payload.instructions) throw new Error('Invalid ROM format.');
-    machine.setDevice(payload.device || 'didj');
-    setActiveDevice(payload.device || 'didj');
-    machine.loadProgram(payload);
-    updateLog(`Loaded ROM: ${file.name}`);
-  } catch (error) {
-    updateLog(`ROM error: ${error.message}`);
+  if (!file) {
+    selectedFile = null;
+    playButton.disabled = true;
+    return;
   }
+  selectedFile = file;
+  playButton.disabled = false;
+  updateLog(`Selected ROM: ${file.name}`);
 });
 
 const keyMap = {
